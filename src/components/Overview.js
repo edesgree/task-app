@@ -1,21 +1,56 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import React from 'react';
 
 export default function Overview(props) {
+  const [currentItem, setCurrentItem] = React.useState('');
+  const [editMode, setEditMode] = React.useState(false);
+  const editTask = (task) => {
+    setCurrentItem(task);
+    setEditMode(true);
+  };
+  console.log('edit mode ', editMode);
+  console.log('current item ', currentItem);
   const taskElements = props.taskList.map((task) => {
     return (
       <li key={task.id}>
-        {task.taskName}
-        <div className="actions">
-          <FontAwesomeIcon
-            icon="fa-solid fa-pen-to-square"
-            color="rgb(147 30 140)"
-          />
-          <FontAwesomeIcon
-            onClick={() => props.handleDelete(task.id)}
-            icon="fa-solid fa-trash"
-            color="rgb(147 30 140)"
-          />
-        </div>
+        {editMode && currentItem === task.id ? (
+          <div>
+            <input
+              type="text"
+              onChange={props.handleEdit}
+              value={task.taskName}
+              name="editTaskName"
+            />
+            <div className="actions">
+              <FontAwesomeIcon
+                onClick={() => props.handleEdit(task.id)}
+                icon="fa-solid fa-square-plus"
+                color="rgb(147 30 140)"
+              />
+              <FontAwesomeIcon
+                onClick={() => props.handleDelete(task.id)}
+                icon="fa-solid fa-trash"
+                color="rgb(147 30 140)"
+              />
+            </div>
+          </div>
+        ) : (
+          <div>
+            {task.taskName} - {task.id}
+            <div className="actions">
+              <FontAwesomeIcon
+                icon="fa-solid fa-pen-to-square"
+                color="rgb(147 30 140)"
+                onClick={() => editTask(task.id)}
+              />
+              <FontAwesomeIcon
+                onClick={() => props.handleDelete(task.id)}
+                icon="fa-solid fa-trash"
+                color="rgb(147 30 140)"
+              />
+            </div>
+          </div>
+        )}
       </li>
     );
   });

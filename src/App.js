@@ -18,6 +18,7 @@ function App() {
     id: ''
   });
   const [taskList, setTaskList] = React.useState([]);
+
   const handleChange = (event) => {
     const { name, value } = event.target;
 
@@ -26,20 +27,34 @@ function App() {
       [name]: value,
       id: nanoid()
     }));
-    console.log(taskInfo);
+    console.log('change ', taskInfo);
   };
   const onSubmitTask = (event) => {
     event.preventDefault();
+
     setTaskList((oldList) => {
       return (oldList = [...oldList, taskInfo]);
     });
-
-    console.log('list', taskList);
   };
   const handleDelete = (id) => {
     setTaskList((oldList) => {
       return oldList.filter((task) => task.id !== id);
     });
+  };
+  const handleEdit = (event,id, newValue) => {
+    const { name, value } = event.target;
+    const newList = taskList.map((item) => {
+      if (item.id === id) {
+        //return { ...item, name: newValue };
+        setTaskInfo((prevData) => ({
+          ...prevData,
+          [name]: value,
+          id: nanoid()
+        }));
+      }
+      return newList;
+    });
+    setTaskList(newList);
   };
   return (
     <main>
@@ -58,7 +73,11 @@ function App() {
           <FontAwesomeIcon icon="fa-solid fa-square-plus" />
         </button>
       </div>
-      <Overview taskList={taskList} handleDelete={handleDelete} />
+      <Overview
+        taskList={taskList}
+        handleEdit={handleEdit}
+        handleDelete={handleDelete}
+      />
     </main>
   );
 }
