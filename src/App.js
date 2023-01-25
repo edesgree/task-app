@@ -31,8 +31,6 @@ function App() {
         setItems([...items, input]);
       }
       setInput('');
-    } else {
-      console.log('ooo');
     }
   };
 
@@ -48,6 +46,7 @@ function App() {
   };
   React.useEffect(() => {
     localStorage.setItem('myTasks', JSON.stringify(items));
+    console.log(items);
   }, [items]);
   return (
     <div>
