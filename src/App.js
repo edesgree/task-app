@@ -13,7 +13,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 library.add(faSquarePlus, faTrash, faPenToSquare, faSave);
 function App() {
-  const [items, setItems] = useState([]);
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem('myTasks')) || []
+  );
   const [input, setInput] = useState('');
   const [editing, setEditing] = useState(null);
 
@@ -44,7 +46,9 @@ function App() {
     newItems.splice(index, 1);
     setItems(newItems);
   };
-
+  React.useEffect(() => {
+    localStorage.setItem('myTasks', JSON.stringify(items));
+  }, [items]);
   return (
     <div>
       <h1>Task list</h1>
