@@ -64,6 +64,9 @@ button {
   &:hover {
     background: $light-blue;
   }
+  &:disabled {
+    background: grey;
+  }
   &.primary {
     background: $purple;
     border: none;
@@ -99,6 +102,9 @@ section {
 }
 .form-control {
   display: flex;
+  input {
+    flex: 1;
+  }
 }
 .taskList {
   display: flex;
@@ -121,6 +127,7 @@ section {
     & > div {
       display: flex;
       gap: 5px;
+      justify-content: space-between;
     }
   }
 }

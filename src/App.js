@@ -1,84 +1,88 @@
-import React from 'react';
-import Overview from './components/Overview';
+import React, { useState } from 'react';
+import ListItem from './components/ListItem';
 import { nanoid } from 'nanoid';
 import { library } from '@fortawesome/fontawesome-svg-core';
 
 import {
   faSquarePlus,
   faTrash,
-  faPenToSquare
+  faPenToSquare,
+  faSave
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-library.add(faSquarePlus, faTrash, faPenToSquare);
-
+library.add(faSquarePlus, faTrash, faPenToSquare, faSave);
 function App() {
-  const [taskInfo, setTaskInfo] = React.useState({
-    taskName: '',
-    id: ''
-  });
-  const [taskList, setTaskList] = React.useState([]);
+  const [items, setItems] = useState([]);
+  const [input, setInput] = useState('');
+  const [editing, setEditing] = useState(null);
 
-  const handleChange = (event) => {
-    const { name, value } = event.target;
-
-    setTaskInfo((prevData) => ({
-      ...prevData,
-      [name]: value,
-      id: nanoid()
-    }));
-    console.log('change ', taskInfo);
-  };
-  const onSubmitTask = (event) => {
-    event.preventDefault();
-
-    setTaskList((oldList) => {
-      return (oldList = [...oldList, taskInfo]);
-    });
-  };
-  const handleDelete = (id) => {
-    setTaskList((oldList) => {
-      return oldList.filter((task) => task.id !== id);
-    });
-  };
-  const handleEdit = (event,id, newValue) => {
-    const { name, value } = event.target;
-    const newList = taskList.map((item) => {
-      if (item.id === id) {
-        //return { ...item, name: newValue };
-        setTaskInfo((prevData) => ({
-          ...prevData,
-          [name]: value,
-          id: nanoid()
-        }));
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (input !== '') {
+      if (editing !== null) {
+        const newItems = [...items];
+        newItems[editing] = input;
+        setItems(newItems);
+        setEditing(null);
+      } else {
+        setItems([...items, input]);
       }
-      return newList;
-    });
-    setTaskList(newList);
+      setInput('');
+    } else {
+      console.log('ooo');
+    }
   };
-  return (
-    <main>
-      <h1>Task list</h1>
-      <div className="form-control">
-        <input
-          className="input"
-          type="text"
-          placeholder="new task"
-          onChange={handleChange}
-          value={taskInfo.taskName}
-          name="taskName"
-        />
 
-        <button onClick={onSubmitTask}>
-          <FontAwesomeIcon icon="fa-solid fa-square-plus" />
-        </button>
-      </div>
-      <Overview
-        taskList={taskList}
-        handleEdit={handleEdit}
-        handleDelete={handleDelete}
-      />
-    </main>
+  const handleEdit = (index) => {
+    setEditing(index);
+    setInput(items[index]);
+  };
+
+  const handleDelete = (index) => {
+    const newItems = [...items];
+    newItems.splice(index, 1);
+    setItems(newItems);
+  };
+
+  return (
+    <div>
+      <h1>Task list</h1>
+
+      <form onSubmit={handleSubmit}>
+        <div className="form-control">
+          <input
+            value={editing === null ? input : ''}
+            onChange={(e) => setInput(e.target.value)}
+            disabled={editing !== null ? true : false}
+          />
+          <button type="submit" disabled={editing !== null ? true : false}>
+            <FontAwesomeIcon
+              icon="fa-solid fa-square-plus"
+              color="rgb(147 30 140)"
+            />
+          </button>
+        </div>
+      </form>
+      <section>
+        <h2>My tasks</h2>
+        <ul className="taskList">
+          {items.map((item, index) => (
+            <ListItem
+              key={item}
+              item={item}
+              index={index}
+              editing={editing}
+              handleEdit={handleEdit}
+              handleDelete={handleDelete}
+              handleSubmit={handleSubmit}
+              input={input}
+              setInput={setInput}
+            />
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }
 
